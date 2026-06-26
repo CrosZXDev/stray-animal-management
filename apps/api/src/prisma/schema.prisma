@@ -1,0 +1,454 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// MODELS (SQLite compatible — enums stored as String)
+// ============================================================
+
+model User {
+  id           String    @id @default(uuid())
+  email        String?   @unique
+  phone        String?   @unique
+  lineUserId   String?   @unique
+  passwordHash String?
+  displayName  String
+  role         String    @default("CITIZEN")
+  district     String?
+  isActive     Boolean   @default(true)
+  consentGiven Boolean   @default(false)
+  consentDate  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  reports          Report[]
+  medicalRecords   MedicalRecord[]   @relation("VetRecords")
+  feedingStations  FeedingStation[]
+  volunteer        Volunteer?
+  adopter          Adopter?
+  donations        Donation[]
+
+  @@index([role])
+  @@index([district])
+}
+
+model Animal {
+  id           String   @id @default(uuid())
+  animalId     String   @unique
+  type         String   // DOG, CAT
+  name         String?
+  color        String
+  size         String   // SMALL, MEDIUM, LARGE
+  gender       String   // MALE, FEMALE, UNKNOWN
+  personality  String?
+  markings     String?
+  estimatedAge String?
+  neutered     Boolean  @default(false)
+  neuteredDate DateTime?
+  earTipped    Boolean  @default(false)
+  vaccinated   Boolean  @default(false)
+  status       String   @default("STRAY")
+  latitude     Float
+  longitude    Float
+  district     String
+  registeredBy String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  deletedAt    DateTime?
+
+  photos           AnimalPhoto[]
+  history          AnimalHistory[]
+  medicalRecords   MedicalRecord[]
+  adoptionProfile  AdoptionProfile?
+  fosterPeriods    FosterPeriod[]
+  donations        Donation[]
+  applications     AdoptionApplication[]
+
+  @@index([district])
+  @@index([status])
+  @@index([type, status])
+  @@index([animalId])
+}
+
+model AnimalPhoto {
+  id        String   @id @default(uuid())
+  animalId  String
+  url       String
+  thumbnail String?
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  animal Animal @relation(fields: [animalId], references: [id])
+
+  @@index([animalId])
+}
+
+model AnimalHistory {
+  id        String   @id @default(uuid())
+  animalId  String
+  action    String
+  details   String
+  changedBy String
+  createdAt DateTime @default(now())
+
+  animal Animal @relation(fields: [animalId], references: [id])
+
+  @@index([animalId])
+}
+
+model Report {
+  id          String   @id @default(uuid())
+  trackingId  String   @unique
+  type        String   // NEW_SIGHTING, INJURED, AGGRESSIVE, GROWING_PACK, ABUSE
+  description String
+  latitude    Float
+  longitude   Float
+  district    String
+  urgent      Boolean  @default(false)
+  anonymous   Boolean  @default(false)
+  status      String   @default("RECEIVED")
+  reporterId  String?
+  animalId    String?
+  photoUrls   String   @default("[]") // JSON array
+  slaDeadline DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  reporter       User?           @relation(fields: [reporterId], references: [id])
+  assignment     CaseAssignment?
+
+  @@index([status])
+  @@index([district])
+  @@index([trackingId])
+}
+
+model CaseAssignment {
+  id         String    @id @default(uuid())
+  reportId   String    @unique
+  assigneeId String
+  assignedBy String
+  notes      String?
+  resolvedAt DateTime?
+  result     String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  report Report @relation(fields: [reportId], references: [id])
+
+  @@index([assigneeId])
+}
+
+model ReporterScore {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  points    Int      @default(0)
+  badge     String   @default("NONE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MedicalRecord {
+  id          String   @id @default(uuid())
+  animalId    String
+  type        String   // VACCINATION, STERILIZATION, TREATMENT, CHECKUP, EMERGENCY
+  date        DateTime
+  vetId       String
+  description String
+  medications String?
+  notes       String?
+  photoUrls   String   @default("[]") // JSON array
+  offlineSync Boolean  @default(false)
+  syncedAt    DateTime?
+  createdAt   DateTime @default(now())
+
+  animal Animal @relation(fields: [animalId], references: [id])
+  vet    User   @relation("VetRecords", fields: [vetId], references: [id])
+
+  @@index([animalId])
+  @@index([vetId])
+}
+
+model VaccineSchedule {
+  id           String   @id @default(uuid())
+  animalId     String
+  vaccineType  String
+  lastGiven    DateTime
+  nextDue      DateTime
+  status       String   @default("SCHEDULED")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([animalId])
+  @@index([nextDue])
+}
+
+model Campaign {
+  id          String   @id @default(uuid())
+  name        String
+  district    String
+  targetCount Int
+  actualCount Int      @default(0)
+  budget      Float
+  budgetUsed  Float    @default(0)
+  startDate   DateTime
+  endDate     DateTime
+  status      String   @default("PLANNED")
+  teamId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  results CampaignResult[]
+
+  @@index([district])
+  @@index([status])
+}
+
+model CampaignResult {
+  id           String   @id @default(uuid())
+  campaignId   String
+  animalId     String?
+  actionType   String
+  notes        String?
+  performedBy  String
+  createdAt    DateTime @default(now())
+
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+
+  @@index([campaignId])
+}
+
+model AdoptionProfile {
+  id              String  @id @default(uuid())
+  animalId        String  @unique
+  description     String?
+  suitableFor     String?
+  specialNeeds    String?
+  isAvailable     Boolean @default(true)
+
+  animal Animal @relation(fields: [animalId], references: [id])
+}
+
+model Adopter {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  housingType      String
+  hasYard          Boolean
+  experience       String
+  timeAvailable    String
+  householdMembers Int
+  existingPets     String?
+  screeningStatus  String   @default("PENDING")
+  screeningNotes   String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user         User                  @relation(fields: [userId], references: [id])
+  applications AdoptionApplication[]
+}
+
+model AdoptionApplication {
+  id             String    @id @default(uuid())
+  adopterId      String
+  animalId       String
+  status         String    @default("INTERESTED")
+  meetingDate    DateTime?
+  trialStartDate DateTime?
+  trialEndDate   DateTime?
+  confirmedDate  DateTime?
+  returnReason   String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  adopter   Adopter    @relation(fields: [adopterId], references: [id])
+  animal    Animal     @relation(fields: [animalId], references: [id])
+  followUps FollowUp[]
+
+  @@index([adopterId])
+  @@index([animalId])
+}
+
+model FollowUp {
+  id            String    @id @default(uuid())
+  applicationId String
+  scheduledDate DateTime
+  completedDate DateTime?
+  status        String    @default("PENDING")
+  photoUrls     String    @default("[]") // JSON array
+  notes         String?
+
+  application AdoptionApplication @relation(fields: [applicationId], references: [id])
+
+  @@index([applicationId])
+  @@index([scheduledDate])
+}
+
+model FeedingStation {
+  id          String    @id @default(uuid())
+  feederId    String
+  latitude    Float
+  longitude   Float
+  district    String
+  feedingTime String
+  animalCount Int
+  photoUrl    String?
+  isActive    Boolean   @default(true)
+  lastCheckIn DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  feeder   User       @relation(fields: [feederId], references: [id])
+  checkIns CheckIn[]
+
+  @@index([district])
+  @@index([feederId])
+}
+
+model CheckIn {
+  id        String   @id @default(uuid())
+  stationId String
+  notes     String?
+  createdAt DateTime @default(now())
+
+  station FeedingStation @relation(fields: [stationId], references: [id])
+
+  @@index([stationId])
+}
+
+model Volunteer {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  skills       String   @default("[]") // JSON array
+  district     String
+  availability String
+  totalHours   Float    @default(0)
+  badgeLevel   String   @default("NONE")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id])
+  assignments Assignment[]
+
+  @@index([district])
+}
+
+model Assignment {
+  id          String    @id @default(uuid())
+  volunteerId String
+  title       String
+  type        String
+  district    String
+  deadline    DateTime?
+  status      String    @default("OPEN")
+  hours       Float?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  volunteer Volunteer @relation(fields: [volunteerId], references: [id])
+
+  @@index([volunteerId])
+  @@index([status])
+}
+
+model FosterPeriod {
+  id          String    @id @default(uuid())
+  volunteerId String
+  animalId    String
+  startDate   DateTime
+  endDate     DateTime?
+  status      String    @default("ACTIVE")
+  notes       String?
+  createdAt   DateTime  @default(now())
+
+  animal Animal @relation(fields: [animalId], references: [id])
+
+  @@index([volunteerId])
+  @@index([animalId])
+}
+
+model Donation {
+  id        String   @id @default(uuid())
+  donorId   String?
+  animalId  String?
+  amount    Float
+  type      String   // MONEY, GOODS, SPONSOR
+  status    String   @default("COMPLETED")
+  message   String?
+  createdAt DateTime @default(now())
+
+  donor  User?   @relation(fields: [donorId], references: [id])
+  animal Animal? @relation(fields: [animalId], references: [id])
+
+  @@index([donorId])
+}
+
+model Zone {
+  id        String   @id @default(uuid())
+  name      String
+  district  String
+  boundary  String   // GeoJSON Polygon (stored as text)
+  teamId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([district])
+}
+
+model Task {
+  id          String    @id @default(uuid())
+  title       String
+  type        String
+  assigneeId  String
+  priority    String    @default("MEDIUM")
+  deadline    DateTime
+  status      String    @default("OPEN")
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([assigneeId])
+  @@index([status])
+  @@index([deadline])
+}
+
+model Consent {
+  id        String    @id @default(uuid())
+  userId    String
+  purpose   String
+  granted   Boolean
+  grantedAt DateTime  @default(now())
+  revokedAt DateTime?
+
+  @@index([userId])
+}
+
+model InAppNotification {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  body      String
+  read      Boolean  @default(false)
+  priority  String   @default("MEDIUM")
+  createdAt DateTime @default(now())
+
+  @@index([userId, read])
+  @@index([createdAt])
+}
+
+model NotificationPreference {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  lineEnabled     Boolean  @default(true)
+  inAppEnabled    Boolean  @default(true)
+  emailEnabled    Boolean  @default(false)
+  quietHoursStart String?  // e.g., "22:00"
+  quietHoursEnd   String?  // e.g., "07:00"
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}

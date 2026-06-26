@@ -1,0 +1,191 @@
+{
+  "/StrayAnimalCdnStack": [
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "<anonymous> (D:\\Kiro\\infrastructure\\lib\\app.ts:12:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/StrayAnimalCdnStack/DistributionDomainName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DistributionDomainName"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new CdnStack (D:\\Kiro\\infrastructure\\lib\\cdn-stack.ts:130:35)",
+        "<anonymous> (D:\\Kiro\\infrastructure\\lib\\app.ts:12:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/StrayAnimalCdnStack/DistributionId": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DistributionId"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new CdnStack (D:\\Kiro\\infrastructure\\lib\\cdn-stack.ts:136:5)",
+        "<anonymous> (D:\\Kiro\\infrastructure\\lib\\app.ts:12:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/StrayAnimalCdnStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/StrayAnimalCdnStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/StrayAnimalCdnStack/ImageOAC/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ImageOACA0F09E8A"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new S3OriginAccessControl2 in aws-cdk-lib...",
+        "new CdnStack (D:\\Kiro\\infrastructure\\lib\\cdn-stack.ts:39:17)",
+        "<anonymous> (D:\\Kiro\\infrastructure\\lib\\app.ts:12:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/StrayAnimalCdnStack/ImageCachePolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ImageCachePolicy3A3980AA"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new CachePolicy2 in aws-cdk-lib...",
+        "new CdnStack (D:\\Kiro\\infrastructure\\lib\\cdn-stack.ts:47:30)",
+        "<anonymous> (D:\\Kiro\\infrastructure\\lib\\app.ts:12:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/StrayAnimalCdnStack/ImageResponseHeaders/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ImageResponseHeaders528E9F7E"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new ResponseHeadersPolicy2 in aws-cdk-lib...",
+        "new CdnStack (D:\\Kiro\\infrastructure\\lib\\cdn-stack.ts:61:35)",
+        "<anonymous> (D:\\Kiro\\infrastructure\\lib\\app.ts:12:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/StrayAnimalCdnStack/ImageCdn/Origin1": [
+    {
+      "type": "aws:cdk:warning",
+      "data": "Cannot update bucket policy of an imported bucket. You will need to update the policy manually instead.\nSee the \"Setting up OAC with imported S3 buckets\" section of module's README for more info. [ack: @aws-cdk/aws-cloudfront-origins:updateImportedBucketPolicyOac]",
+      "trace": [
+        "Annotations.addMessage (D:\\Kiro\\infrastructure\\node_modules\\aws-cdk-lib\\core\\lib\\annotations.js:1:3441)",
+        "Annotations.addWarningV2 (D:\\Kiro\\infrastructure\\node_modules\\aws-cdk-lib\\core\\lib\\annotations.js:1:2129)",
+        "S3BucketOriginWithOAC.bind (D:\\Kiro\\infrastructure\\node_modules\\aws-cdk-lib\\aws-cloudfront-origins\\lib\\s3-bucket-origin.js:2:282)",
+        "WrappedClass.addOrigin (D:\\Kiro\\infrastructure\\node_modules\\aws-cdk-lib\\aws-cloudfront\\lib\\distribution.js:1:25666)",
+        "new Distribution2 (D:\\Kiro\\infrastructure\\node_modules\\aws-cdk-lib\\aws-cloudfront\\lib\\distribution.js:1:14601)",
+        "new Distribution2 (D:\\Kiro\\infrastructure\\node_modules\\aws-cdk-lib\\core\\lib\\no-box-stack-traces.js:1:345)",
+        "new Distribution2 (D:\\Kiro\\infrastructure\\node_modules\\aws-cdk-lib\\core\\lib\\prop-injectable.js:1:855)",
+        "new CdnStack (D:\\Kiro\\infrastructure\\lib\\cdn-stack.ts:92:25)",
+        "Object.<anonymous> (D:\\Kiro\\infrastructure\\lib\\app.ts:12:1)",
+        "Module._compile (node:internal/modules/cjs/loader:1873:14)",
+        "Module.m._compile (C:\\Users\\o.witsarut.th\\AppData\\Local\\npm-cache\\_npx\\1bf7c3c15bf47d04\\node_modules\\ts-node\\src\\index.ts:1618:23)",
+        "node:internal/modules/cjs/loader:2013:10",
+        "Object.require.extensions.<computed> [as .ts] (C:\\Users\\o.witsarut.th\\AppData\\Local\\npm-cache\\_npx\\1bf7c3c15bf47d04\\node_modules\\ts-node\\src\\index.ts:1621:12)",
+        "Module.load (node:internal/modules/cjs/loader:1596:32)",
+        "Module._load (node:internal/modules/cjs/loader:1398:12)",
+        "wrapModuleLoad (node:internal/modules/cjs/loader:255:19)",
+        "Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)",
+        "phase4 (C:\\Users\\o.witsarut.th\\AppData\\Local\\npm-cache\\_npx\\1bf7c3c15bf47d04\\node_modules\\ts-node\\src\\bin.ts:649:14)",
+        "bootstrap (C:\\Users\\o.witsarut.th\\AppData\\Local\\npm-cache\\_npx\\1bf7c3c15bf47d04\\node_modules\\ts-node\\src\\bin.ts:95:10)",
+        "main (C:\\Users\\o.witsarut.th\\AppData\\Local\\npm-cache\\_npx\\1bf7c3c15bf47d04\\node_modules\\ts-node\\src\\bin.ts:55:10)",
+        "Object.<anonymous> (C:\\Users\\o.witsarut.th\\AppData\\Local\\npm-cache\\_npx\\1bf7c3c15bf47d04\\node_modules\\ts-node\\src\\bin.ts:800:3)",
+        "Module._compile (node:internal/modules/cjs/loader:1873:14)",
+        "Object.<anonymous> (node:internal/modules/cjs/loader:2013:10)",
+        "Module.load (node:internal/modules/cjs/loader:1596:32)",
+        "Module._load (node:internal/modules/cjs/loader:1398:12)",
+        "wrapModuleLoad (node:internal/modules/cjs/loader:255:19)",
+        "Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)",
+        "node:internal/main/run_main_module:33:47"
+      ]
+    }
+  ],
+  "/StrayAnimalCdnStack/ImageCdn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ImageCdn2F3EFA6B"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Distribution2 in aws-cdk-lib...",
+        "new CdnStack (D:\\Kiro\\infrastructure\\lib\\cdn-stack.ts:92:25)",
+        "<anonymous> (D:\\Kiro\\infrastructure\\lib\\app.ts:12:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/StrayAnimalCdnStack/ImageBucketPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ImageBucketPolicy9715E0D9"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new BucketPolicy2 in aws-cdk-lib...",
+        "CdnStack.addBucketPolicy (D:\\Kiro\\infrastructure\\lib\\cdn-stack.ts:148:26)",
+        "new CdnStack (D:\\Kiro\\infrastructure\\lib\\cdn-stack.ts:127:10)",
+        "<anonymous> (D:\\Kiro\\infrastructure\\lib\\app.ts:12:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/StrayAnimalCdnStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...App.synth in aws-cdk-lib...",
+        "<anonymous> (D:\\Kiro\\infrastructure\\lib\\app.ts:18:5)",
+        "...node internals..."
+      ]
+    }
+  ]
+}

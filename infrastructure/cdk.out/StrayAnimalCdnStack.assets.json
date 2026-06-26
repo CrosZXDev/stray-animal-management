@@ -1,0 +1,21 @@
+{
+  "version": "54.0.0",
+  "files": {
+    "9aca0b735d847fa374d6a5e04e7ca2bfdbbeb5d4627f7afbb47fe9da06200771": {
+      "displayName": "StrayAnimalCdnStack Template",
+      "source": {
+        "path": "StrayAnimalCdnStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-ap-southeast-1-84933348": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1",
+          "objectKey": "9aca0b735d847fa374d6a5e04e7ca2bfdbbeb5d4627f7afbb47fe9da06200771.json",
+          "region": "ap-southeast-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-ap-southeast-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

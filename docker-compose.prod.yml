@@ -1,0 +1,82 @@
+# Production-like docker compose for local testing of built images
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: stray-animal-api
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: postgresql://stray_admin:stray_dev_password@postgres:5432/stray_animal
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev-jwt-secret-local
+      JWT_EXPIRES_IN: 7d
+      AWS_REGION: ap-southeast-1
+      AWS_S3_BUCKET: stray-animal-images
+      AWS_CLOUDFRONT_URL: https://cdn.example.com
+      LINE_CHANNEL_ID: ${LINE_CHANNEL_ID:-}
+      LINE_CHANNEL_SECRET: ${LINE_CHANNEL_SECRET:-}
+      LINE_ACCESS_TOKEN: ${LINE_ACCESS_TOKEN:-}
+      APP_URL: http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/api/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: stray-animal-web
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+    depends_on:
+      api:
+        condition: service_healthy
+
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: stray-animal-db
+    environment:
+      POSTGRES_USER: stray_admin
+      POSTGRES_PASSWORD: stray_dev_password
+      POSTGRES_DB: stray_animal
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stray_admin -d stray_animal"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: stray-animal-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:

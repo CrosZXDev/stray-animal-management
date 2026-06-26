@@ -1,0 +1,271 @@
+{
+ "Description": "CloudFront CDN distribution for stray animal image delivery",
+ "Resources": {
+  "ImageOACA0F09E8A": {
+   "Type": "AWS::CloudFront::OriginAccessControl",
+   "Properties": {
+    "OriginAccessControlConfig": {
+     "Description": "OAC for stray-animal-images S3 bucket",
+     "Name": "StrayAnimalCdnStackImageOAC0F95C80A",
+     "OriginAccessControlOriginType": "s3",
+     "SigningBehavior": "always",
+     "SigningProtocol": "sigv4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "StrayAnimalCdnStack/ImageOAC/Resource"
+   }
+  },
+  "ImageCachePolicy3A3980AA": {
+   "Type": "AWS::CloudFront::CachePolicy",
+   "Properties": {
+    "CachePolicyConfig": {
+     "Comment": "Cache policy for stray animal images — 24h TTL, immutable hashed keys",
+     "DefaultTTL": 86400,
+     "MaxTTL": 31536000,
+     "MinTTL": 3600,
+     "Name": "StrayAnimalImageCachePolicy",
+     "ParametersInCacheKeyAndForwardedToOrigin": {
+      "CookiesConfig": {
+       "CookieBehavior": "none"
+      },
+      "EnableAcceptEncodingBrotli": true,
+      "EnableAcceptEncodingGzip": true,
+      "HeadersConfig": {
+       "HeaderBehavior": "none"
+      },
+      "QueryStringsConfig": {
+       "QueryStringBehavior": "none"
+      }
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "StrayAnimalCdnStack/ImageCachePolicy/Resource"
+   }
+  },
+  "ImageResponseHeaders528E9F7E": {
+   "Type": "AWS::CloudFront::ResponseHeadersPolicy",
+   "Properties": {
+    "ResponseHeadersPolicyConfig": {
+     "Comment": "Response headers for stray animal images",
+     "CustomHeadersConfig": {
+      "Items": [
+       {
+        "Header": "Cache-Control",
+        "Override": true,
+        "Value": "public, max-age=86400, immutable"
+       }
+      ]
+     },
+     "Name": "StrayAnimalImageHeaders",
+     "SecurityHeadersConfig": {
+      "ContentTypeOptions": {
+       "Override": true
+      },
+      "FrameOptions": {
+       "FrameOption": "DENY",
+       "Override": true
+      },
+      "StrictTransportSecurity": {
+       "AccessControlMaxAgeSec": 31536000,
+       "IncludeSubdomains": true,
+       "Override": true
+      }
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "StrayAnimalCdnStack/ImageResponseHeaders/Resource"
+   }
+  },
+  "ImageCdn2F3EFA6B": {
+   "Type": "AWS::CloudFront::Distribution",
+   "Properties": {
+    "DistributionConfig": {
+     "Comment": "Stray Animal Image CDN",
+     "CustomErrorResponses": [
+      {
+       "ErrorCachingMinTTL": 300,
+       "ErrorCode": 403,
+       "ResponseCode": 404
+      },
+      {
+       "ErrorCachingMinTTL": 300,
+       "ErrorCode": 404,
+       "ResponseCode": 404
+      }
+     ],
+     "DefaultCacheBehavior": {
+      "AllowedMethods": [
+       "GET",
+       "HEAD"
+      ],
+      "CachePolicyId": {
+       "Ref": "ImageCachePolicy3A3980AA"
+      },
+      "CachedMethods": [
+       "GET",
+       "HEAD"
+      ],
+      "Compress": true,
+      "ResponseHeadersPolicyId": {
+       "Ref": "ImageResponseHeaders528E9F7E"
+      },
+      "TargetOriginId": "StrayAnimalCdnStackImageCdnOrigin14CFF7201",
+      "ViewerProtocolPolicy": "redirect-to-https"
+     },
+     "Enabled": true,
+     "HttpVersion": "http2and3",
+     "IPV6Enabled": true,
+     "Origins": [
+      {
+       "DomainName": "stray-animal-images.s3.ap-southeast-1.amazonaws.com",
+       "Id": "StrayAnimalCdnStackImageCdnOrigin14CFF7201",
+       "OriginAccessControlId": {
+        "Fn::GetAtt": [
+         "ImageOACA0F09E8A",
+         "Id"
+        ]
+       },
+       "S3OriginConfig": {
+        "OriginAccessIdentity": ""
+       }
+      }
+     ],
+     "PriceClass": "PriceClass_200"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "StrayAnimalCdnStack/ImageCdn/Resource"
+   }
+  },
+  "ImageBucketPolicy9715E0D9": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": "stray-animal-images",
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:GetObject",
+       "Condition": {
+        "StringEquals": {
+         "AWS:SourceArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:aws:cloudfront::",
+            {
+             "Ref": "AWS::AccountId"
+            },
+            ":distribution/",
+            {
+             "Ref": "ImageCdn2F3EFA6B"
+            }
+           ]
+          ]
+         }
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "cloudfront.amazonaws.com"
+       },
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":s3:::stray-animal-images/*"
+         ]
+        ]
+       },
+       "Sid": "AllowCloudFrontOACAccess"
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "StrayAnimalCdnStack/ImageBucketPolicy/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/22NwQ6CQAxEv8X7UhES7oIHbxr4ALMsVSu4S7ZdiSH8u0EOcvDUeTPTNoEkiyHe6IEj07RRRzWMlWjTKj3wZeQUxjyYFiXXjGqRZ9eReaviatc8KdO50Fy9swJjlZ483cjujUHmwlnxrptX/tra3PF3dY0lcu8s4xF1g55/pf/BgVg81UHI2bm15mn6/g/SB5mUdQ3Cg7evJIMUdpsHE0U+WKEnQrnMD0qPfnseAQAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "StrayAnimalCdnStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "DistributionDomainName": {
+   "Description": "CloudFront distribution URL — use as AWS_CLOUDFRONT_URL env var",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Fn::GetAtt": [
+        "ImageCdn2F3EFA6B",
+        "DomainName"
+       ]
+      }
+     ]
+    ]
+   },
+   "Export": {
+    "Name": "StrayAnimalCdnUrl"
+   }
+  },
+  "DistributionId": {
+   "Description": "CloudFront Distribution ID (for cache invalidation)",
+   "Value": {
+    "Ref": "ImageCdn2F3EFA6B"
+   },
+   "Export": {
+    "Name": "StrayAnimalCdnDistributionId"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

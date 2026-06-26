@@ -1,0 +1,17 @@
+node_modules
+**/node_modules
+.git
+.gitignore
+.env
+.env.*
+*.log
+coverage
+.turbo
+**/.turbo
+**/dist
+**/.next
+.aidlc
+.kiro
+.vscode
+.github
+infrastructure

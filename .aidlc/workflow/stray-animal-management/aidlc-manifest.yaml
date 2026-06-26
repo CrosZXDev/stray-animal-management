@@ -1,0 +1,108 @@
+version: "2.2"
+feature: "stray-animal-management"
+language: "th"
+platform: "kiro"
+created: "2026-06-24T11:06:00+07:00"
+updated: "2026-06-24T11:06:00+07:00"
+state:
+  status: "active"
+  scope: "new"
+  sharedPhases: [context, requirements, decomposition, design, tasks]
+  mode: "comprehensive"
+  foundationSkipped: false
+  implementationMode: "standard"
+  quickPath: false
+artifacts:
+  context:
+    status: "approved"
+    timestamp: "2026-06-24T11:06:00+07:00"
+    files: [context.md]
+  requirements:
+    status: "approved"
+    timestamp: "2026-06-24T11:11:00+07:00"
+    files: [requirements.md, personas.md]
+  decomposition:
+    status: "approved"
+    timestamp: "2026-06-24T11:13:00+07:00"
+    files: [units.md]
+  design:
+    status: "approved"
+    timestamp: "2026-06-24T11:16:00+07:00"
+    files: [design.md, design/data-model.md, design/implementation.md]
+  tasks:
+    status: "approved"
+    timestamp: "2026-06-24T11:18:00+07:00"
+    files: [tasks.md]
+implementation:
+  totalTasks: 35
+  completedTasks: 29
+  currentTask: "T-30"
+  currentWave: 7
+context-summary:
+  type: "Greenfield"
+  scope: "new"
+  stack: "Pending D3 decisions"
+  architecture: "Pending D3 decisions"
+  feature: "ระบบจัดการสัตว์จรจัดสำหรับกรุงเทพมหานครและเทศบาล"
+  impact: "New standalone"
+  complexity: "High"
+  teamSize: "Medium (4-8)"
+  recommendations:
+    personas: true
+    units: true
+    nfr: true
+decisions:
+  requirements:
+    scope: "Full product (7 modules)"
+    users: "ทุกกลุ่ม 7 ประเภท"
+    personas: true
+    features: "ทั้ง 7 modules"
+    entities: "Animal, Report, MedicalRecord, Adoption, Volunteer"
+    integrations: "LINE OA, Map/GIS, Image storage"
+    businessRules: "PDPA, Adoption screening, TNR tracking, Duplicate detection"
+    priority: "Feature completeness"
+    nfr: true
+    teamSize: "Medium (4-8)"
+    timeline: "5-6 months"
+  decomposition:
+    decompose: true
+    architecture: "Modular Monolith"
+    strategy: "Domain-Driven"
+    foundation: true
+    units: "7 (Foundation, Animal Registry, Citizen Reporting, Health & Medical, Adoption, Community, Map & Dashboard)"
+    dependencies: "Foundation → all, Animal Registry → downstream"
+    sequence: "Foundation → Animal Registry → Citizen Reporting → Health → Adoption → Community → Map & Dashboard"
+steering:
+  updatedBy:
+    product: [context, requirements]
+    tech: [context]
+    structure: [context]
+units:
+  - name: "foundation"
+    status: "pending"
+    phase: null
+    completedPhases: []
+  - name: "animal-registry"
+    status: "pending"
+    phase: null
+    completedPhases: []
+  - name: "citizen-reporting"
+    status: "pending"
+    phase: null
+    completedPhases: []
+  - name: "health-medical"
+    status: "pending"
+    phase: null
+    completedPhases: []
+  - name: "adoption"
+    status: "pending"
+    phase: null
+    completedPhases: []
+  - name: "community"
+    status: "pending"
+    phase: null
+    completedPhases: []
+  - name: "map-dashboard"
+    status: "pending"
+    phase: null
+    completedPhases: []
